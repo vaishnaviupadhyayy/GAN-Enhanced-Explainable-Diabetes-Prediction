@@ -1,0 +1,9 @@
+Feature,Feature Value,SHAP Value,Direction,Absolute SHAP Value
+Glucose,159.0,0.3046818442983049,Increases model output for Diabetes,0.3046818442983049
+BMI,27.4,-0.10343635477232081,Decreases model output for Diabetes,0.10343635477232081
+Age,40.0,0.0688830826021589,Increases model output for Diabetes,0.0688830826021589
+Pregnancies,7.0,0.056174734383894136,Increases model output for Diabetes,0.056174734383894136
+DiabetesPedigreeFunction,0.294,-0.030695271440642328,Decreases model output for Diabetes,0.030695271440642328
+Insulin,125.0,0.01910042975060874,Increases model output for Diabetes,0.01910042975060874
+SkinThickness,29.0,0.004525237093155023,Increases model output for Diabetes,0.004525237093155023
+BloodPressure,64.0,0.00413763358972741,Increases model output for Diabetes,0.00413763358972741

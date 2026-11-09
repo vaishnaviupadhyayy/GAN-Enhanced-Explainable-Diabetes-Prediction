@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Risk Assessment | Explainable AI</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6fa;
+            color: #263449;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #14243a;
+            color: white;
+            padding: 35px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #cbd5e1;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 18px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            color: #172d49;
+            font-size: 21px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            color: #263d5b;
+            font-size: 17px;
+            margin: 22px 0 10px;
+        }
+
+        p {
+            color: #596579;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .notice {
+            background: #fff8e8;
+            border-left: 4px solid #d59b32;
+            padding: 17px;
+            border-radius: 6px;
+            margin-bottom: 24px;
+            color: #66501f;
+            font-size: 14px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .field label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #34445a;
+        }
+
+        .field small {
+            display: block;
+            color: #8490a0;
+            margin-bottom: 7px;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d8dee8;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        .field input:focus {
+            outline: none;
+            border-color: #3568a8;
+            box-shadow: 0 0 0 2px rgba(53, 104, 168, 0.12);
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            border: none;
+            border-radius: 7px;
+            background: #234d7c;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #183a61;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        #errorMessage {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #fff0f0;
+            color: #a52c2c;
+        }
+
+        #report {
+            display: none;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .result-box {
+            padding: 22px;
+            background: #f2f5f9;
+            border-radius: 9px;
+        }
+
+        .result-box span {
+            display: block;
+            color: #66758a;
+            font-size: 14px;
+        }
+
+        .result-box strong {
+            display: block;
+            font-size: 25px;
+            color: #193d65;
+            margin-top: 5px;
+        }
+
+        .disclaimer {
+            background: #f4f6fa;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 13px;
+            margin-top: 18px;
+        }
+
+        .chart-row {
+            margin: 15px 0;
+        }
+
+        .chart-label {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .bar-background {
+            width: 100%;
+            height: 13px;
+            background: #e9edf3;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            border-radius: 20px;
+        }
+
+        .positive {
+            background: #c45c58;
+        }
+
+        .negative {
+            background: #397ca9;
+        }
+
+        .plot-image {
+            width: 100%;
+            max-width: 850px;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border: 1px solid #e5e9ef;
+            border-radius: 8px;
+        }
+
+        .plot-description {
+            font-size: 14px;
+            color: #68768a;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid #e6eaf0;
+            padding: 11px;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f4f8;
+            color: #30445e;
+        }
+
+        .interpretation {
+            background: #f2f6fb;
+            border-left: 4px solid #3568a8;
+            padding: 18px;
+            border-radius: 7px;
+        }
+
+        .interpretation p {
+            margin-bottom: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #7b8796;
+            font-size: 13px;
+        }
+
+        @media (max-width: 650px) {
+
+            .form-grid,
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 19px;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Diabetes Risk Assessment</h1>
+        <p>Machine Learning · SHAP · LIME · Explainable AI</p>
+    </header>
+
+    <main class="container">
+
+        <div class="subtitle">
+            <h2>Understand the model's prediction.</h2>
+            <p>Enter the eight measurements below to generate a research-based model prediction and an explainability
+                report.</p>
+        </div>
+
+        <div class="notice">
+            <strong>Research prototype:</strong>
+            This system uses the Pima Indians Diabetes dataset, which contains female participants only.
+            It is not clinically validated, cannot diagnose diabetes, and should not replace professional
+            medical assessment or clinical testing.
+        </div>
+
+        <section class="card">
+            <h2>Assessment measurements</h2>
+            <p>Enter the measurements to generate a model prediction.</p>
+
+            <form id="assessmentForm">
+
+                <div class="form-grid">
+
+                    <div class="field">
+                        <label for="Pregnancies">Pregnancies</label>
+                        <small>Number of pregnancies recorded</small>
+                        <input id="Pregnancies" type="number" min="0" step="1" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="Glucose">Glucose</label>
+                        <small>Plasma glucose concentration</small>
+                        <input id="Glucose" type="number" min="0" step="any" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="BloodPressure">Blood Pressure</label>
+                        <small>Diastolic blood pressure</small>
+                        <input id="BloodPressure" type="number" min="0" step="any" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="SkinThickness">Skin Thickness</label>
+                        <small>Triceps skin fold thickness</small>
+                        <input id="SkinThickness" type="number" min="0" step="any" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="Insulin">Insulin</label>
+                        <small>2-hour serum insulin</small>
+                        <input id="Insulin" type="number" min="0" step="any" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="BMI">BMI</label>
+                        <small>Body mass index</small>
+                        <input id="BMI" type="number" min="0" step="any" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="DiabetesPedigreeFunction">Diabetes Pedigree Function</label>
+                        <small>Family-history-related dataset feature</small>
+                        <input id="DiabetesPedigreeFunction" type="number" min="0" step="any" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="Age">Age</label>
+                        <small>Age in years</small>
+                        <input id="Age" type="number" min="1" step="1" required>
+                    </div>
+
+                </div>
+
+                <button type="submit" id="submitButton">
+                    Generate Assessment Report
+                </button>
+
+                <div id="errorMessage" role="alert"></div>
+
+            </form>
+        </section>
+
+        <div id="report">
+
+            <section class="card">
+                <h2>Assessment Report</h2>
+                <p>Random Forest prediction and model-generated probability.</p>
+
+                <div class="result-grid">
+
+                    <div class="result-box">
+                        <span>Model prediction</span>
+                        <strong id="prediction">--</strong>
+                    </div>
+
+                    <div class="result-box">
+                        <span>Estimated probability for Diabetes class</span>
+                        <strong id="probability">--</strong>
+                    </div>
+
+                </div>
+
+                <div class="disclaimer">
+                    This probability is a model output, not a clinically calibrated personal probability or diagnosis.
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Patient-Friendly Interpretation</h2>
+                <p>Understanding the factors behind this model output.</p>
+                <div class="interpretation" id="patientInterpretation">
+                    The interpretation will appear after assessment.
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Global SHAP Feature Importance</h2>
+                <p class="plot-description">
+                    This chart shows the average importance of each measurement
+                    across the test dataset, based on mean absolute SHAP values.
+                </p>
+
+                <img class="plot-image" src="{{ url_for('static', filename='shap_global_bar.png') }}"
+                    alt="Global SHAP feature importance chart">
+            </section>
+
+            <section class="card">
+                <h2>SHAP Summary Plot</h2>
+                <p class="plot-description">
+                    The SHAP summary plot shows how different feature values
+                    influence the model output across multiple test records.
+                </p>
+
+                <img class="plot-image" src="{{ url_for('static', filename='shap_beeswarm.png') }}"
+                    alt="SHAP beeswarm summary plot">
+            </section>
+
+            <section class="card">
+                <h2>Individual SHAP Explanation</h2>
+                <p>How each measurement influences this individual model output.</p>
+
+                <div id="shapChart"></div>
+
+                <h3>Individual SHAP Waterfall Plot</h3>
+                <p class="plot-description">
+                    This plot explains how the individual measurements
+                    contribute to the model's prediction for this record.
+                </p>
+
+                <img id="shapWaterfallImage" class="plot-image"
+                    src="{{ url_for('static', filename='shap_patient_waterfall.png') }}"
+                    alt="Individual SHAP waterfall plot">
+
+                <h3>Detailed SHAP Contributions</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Input value</th>
+                                <th>SHAP contribution</th>
+                                <th>Direction</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shapTable"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Individual LIME Explanation</h2>
+                <p>Local approximation of the model's prediction.</p>
+
+                <div id="limeChart"></div>
+
+                <h3>Individual LIME Explanation Plot</h3>
+                <p class="plot-description">
+                    LIME highlights the feature conditions supporting
+                    or opposing the local model prediction.
+                </p>
+
+                <img id="limeExplanationImage" class="plot-image"
+                    src="{{ url_for('static', filename='lime_patient_explanation.png') }}"
+                    alt="Individual LIME explanation chart">
+
+                <h3>Detailed LIME Contributions</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature condition</th>
+                                <th>LIME contribution</th>
+                                <th>Direction</th>
+                            </tr>
+                        </thead>
+                        <tbody id="limeTable"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- GAN AND ORIGINAL DATASET COMPARISON -->
+
+            <section class="card">
+                <h2>GAN vs Original Dataset: Model Performance Comparison</h2>
+
+                <p>
+                    All models were evaluated on the same untouched test set of
+                    154 records. The original training set contained 614 records.
+                    The GAN-augmented training set contained 814 records,
+                    including 200 synthetic diabetic-class records.
+                </p>
+
+                <h3>Original Training Dataset</h3>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Accuracy</th>
+                                <th>Precision</th>
+                                <th>Recall</th>
+                                <th>Specificity</th>
+                                <th>F1-score</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>Logistic Regression</td>
+                                <td>70.78%</td>
+                                <td>60.00%</td>
+                                <td>50.00%</td>
+                                <td>82.00%</td>
+                                <td>54.55%</td>
+                            </tr>
+
+                            <tr>
+                                <td>SVM</td>
+                                <td>74.03%</td>
+                                <td>65.22%</td>
+                                <td>55.56%</td>
+                                <td>84.00%</td>
+                                <td>60.00%</td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Random Forest</strong></td>
+                                <td><strong>77.92%</strong></td>
+                                <td><strong>72.73%</strong></td>
+                                <td>59.26%</td>
+                                <td><strong>88.00%</strong></td>
+                                <td><strong>65.31%</strong></td>
+                            </tr>
+
+                            <tr>
+                                <td>XGBoost</td>
+                                <td>75.97%</td>
+                                <td>67.35%</td>
+                                <td><strong>61.11%</strong></td>
+                                <td>84.00%</td>
+                                <td>64.08%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>GAN-Augmented Training Dataset</h3>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Accuracy</th>
+                                <th>Precision</th>
+                                <th>Recall</th>
+                                <th>Specificity</th>
+                                <th>F1-score</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>Logistic Regression</td>
+                                <td>71.43%</td>
+                                <td>59.62%</td>
+                                <td>57.41%</td>
+                                <td>79.00%</td>
+                                <td>58.49%</td>
+                            </tr>
+
+                            <tr>
+                                <td>SVM</td>
+                                <td>73.38%</td>
+                                <td>63.27%</td>
+                                <td>57.41%</td>
+                                <td>82.00%</td>
+                                <td>60.19%</td>
+                            </tr>
+
+                            <tr>
+                                <td>Random Forest</td>
+                                <td>74.68%</td>
+                                <td>65.96%</td>
+                                <td>57.41%</td>
+                                <td>84.00%</td>
+                                <td>61.39%</td>
+                            </tr>
+
+                            <tr>
+                                <td>XGBoost</td>
+                                <td>74.68%</td>
+                                <td>65.31%</td>
+                                <td>59.26%</td>
+                                <td>83.00%</td>
+                                <td>62.14%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Experimental Findings</h3>
+
+                <p>
+                    <strong>Best overall result:</strong>
+                    Random Forest trained on the original dataset achieved
+                    the highest accuracy (77.92%) and F1-score (65.31%)
+                    in this experiment.
+                </p>
+
+                <p>
+                    <strong>Effect of GAN augmentation:</strong>
+                    The augmented data improved F1-score for Logistic Regression
+                    and slightly for SVM, but reduced the Random Forest and
+                    XGBoost results. Therefore, GAN augmentation did not improve
+                    overall model performance in this experiment.
+                </p>
+
+                <p>
+                    <strong>Interpretation:</strong>
+                    Synthetic data increased the number of diabetic-class
+                    training records, but adding synthetic records did not
+                    consistently improve predictive performance. The quality
+                    and distribution of generated records need further evaluation.
+                </p>
+
+                <div class="disclaimer">
+                    These results are from one train-test split and should not
+                    be interpreted as clinical performance. The GAN-generated
+                    records were checked for feature-range validity, but this
+                    alone does not establish that their distributions are
+                    realistic. Further validation, cross-validation and
+                    evaluation on independent data are required.
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Important Limitations</h2>
+
+                <p>
+                    The training dataset contains female participants only.
+                    The model has not been clinically validated and may produce incorrect predictions.
+                </p>
+
+                <p>
+                    SHAP and LIME explain model behaviour; they do not establish
+                    medical causation.
+                </p>
+
+                <p>
+                    This research prototype cannot diagnose diabetes.
+                    Consult a qualified healthcare professional for appropriate clinical testing.
+                </p>
+            </section>
+
+        </div>
+
+    </main>
+
+    <footer>
+        GAN-Enhanced Explainable Diabetes Prediction · Academic Research Prototype
+    </footer>
+
+    <script>
+
+        const form = document.getElementById("assessmentForm");
+        const report = document.getElementById("report");
+        const errorMessage = document.getElementById("errorMessage");
+        const submitButton = document.getElementById("submitButton");
+
+        const fields = [
+            "Pregnancies",
+            "Glucose",
+            "BloodPressure",
+            "SkinThickness",
+            "Insulin",
+            "BMI",
+            "DiabetesPedigreeFunction",
+            "Age"
+        ];
+
+        function createChart(elementId, items, labelKey, valueKey) {
+
+            const container = document.getElementById(elementId);
+            container.innerHTML = "";
+
+            if (!items || items.length === 0) {
+                container.textContent = "No explanation data available.";
+                return;
+            }
+
+            const maximum = Math.max(
+                ...items.map(item => Math.abs(Number(item[valueKey]) || 0)),
+                0.000001
+            );
+
+            items.forEach(item => {
+
+                const value = Number(item[valueKey]) || 0;
+                const width = Math.max((Math.abs(value) / maximum) * 100, 1);
+                const barClass = value >= 0 ? "positive" : "negative";
+
+                const row = document.createElement("div");
+                row.className = "chart-row";
+
+                const label = document.createElement("div");
+                label.className = "chart-label";
+
+                const name = document.createElement("span");
+                name.textContent = item[labelKey];
+
+                const number = document.createElement("strong");
+                number.textContent = value.toFixed(4);
+
+                label.appendChild(name);
+                label.appendChild(number);
+
+                const background = document.createElement("div");
+                background.className = "bar-background";
+
+                const bar = document.createElement("div");
+                bar.className = "bar " + barClass;
+                bar.style.width = width + "%";
+
+                background.appendChild(bar);
+                row.appendChild(label);
+                row.appendChild(background);
+                container.appendChild(row);
+            });
+        }
+
+        function renderShapTable(items) {
+
+            const tbody = document.getElementById("shapTable");
+            tbody.innerHTML = "";
+
+            items.forEach(item => {
+
+                const row = document.createElement("tr");
+
+                const values = [
+                    item.feature,
+                    item.value,
+                    Number(item.contribution).toFixed(5),
+                    item.direction
+                ];
+
+                values.forEach(value => {
+                    const cell = document.createElement("td");
+                    cell.textContent = value;
+                    row.appendChild(cell);
+                });
+
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderLimeTable(items) {
+
+            const tbody = document.getElementById("limeTable");
+            tbody.innerHTML = "";
+
+            items.forEach(item => {
+
+                const row = document.createElement("tr");
+
+                const values = [
+                    item.condition,
+                    Number(item.contribution).toFixed(5),
+                    item.direction
+                ];
+
+                values.forEach(value => {
+                    const cell = document.createElement("td");
+                    cell.textContent = value;
+                    row.appendChild(cell);
+                });
+
+                tbody.appendChild(row);
+            });
+        }
+
+        function createInterpretation(shapItems, limeItems) {
+
+            const container = document.getElementById("patientInterpretation");
+            container.innerHTML = "";
+
+            const sorted = [...shapItems].sort(
+                (a, b) => Math.abs(b.contribution) - Math.abs(a.contribution)
+            );
+
+            const strongest = sorted.slice(0, 3);
+
+            const intro = document.createElement("p");
+            intro.textContent =
+                "The model's explanation identifies the following measurements as its strongest individual contributors:";
+
+            container.appendChild(intro);
+
+            strongest.forEach(item => {
+
+                const paragraph = document.createElement("p");
+
+                const direction = Number(item.contribution) >= 0
+                    ? "increased"
+                    : "decreased";
+
+                paragraph.textContent =
+                    item.feature + " " + direction +
+                    " the model output for the Diabetes class in this prediction.";
+
+                container.appendChild(paragraph);
+            });
+
+            const note = document.createElement("p");
+            note.textContent =
+                "These are explanations of how the algorithm reached its output. " +
+                "They do not show that a measurement caused diabetes or establish an individual's medical condition.";
+
+            container.appendChild(note);
+
+            if (limeItems && limeItems.length > 0) {
+                const limeNote = document.createElement("p");
+                limeNote.textContent =
+                    "The LIME explanation provides a second, local approximation of the same prediction. " +
+                    "SHAP and LIME use different methods, so their contribution values should not be compared directly.";
+
+                container.appendChild(limeNote);
+            }
+        }
+
+        form.addEventListener("submit", async function (event) {
+
+            event.preventDefault();
+
+            errorMessage.style.display = "none";
+            errorMessage.textContent = "";
+
+            const inputData = {};
+
+            fields.forEach(field => {
+                inputData[field] = Number(document.getElementById(field).value);
+            });
+
+            if (fields.some(field => !Number.isFinite(inputData[field]))) {
+                errorMessage.textContent = "Please enter valid numeric values in all fields.";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = "Generating report...";
+
+            try {
+
+                const response = await fetch("/predict", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(inputData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || data.status !== "success") {
+                    throw new Error(data.error || "Unable to generate the assessment report.");
+                }
+
+                document.getElementById("prediction").textContent =
+                    data.prediction;
+
+                document.getElementById("probability").textContent =
+                    Number(data.diabetes_probability).toFixed(1) + "%";
+
+                createChart(
+                    "shapChart",
+                    data.shap_explanation,
+                    "feature",
+                    "contribution"
+                );
+
+                createChart(
+                    "limeChart",
+                    data.lime_explanation,
+                    "condition",
+                    "contribution"
+                );
+
+                renderShapTable(data.shap_explanation);
+                renderLimeTable(data.lime_explanation);
+
+                createInterpretation(
+                    data.shap_explanation,
+                    data.lime_explanation
+                );
+
+                // Refresh individual plots generated for this assessment.
+                document.getElementById("shapWaterfallImage").src =
+                    data.shap_waterfall_url;
+
+                document.getElementById("limeExplanationImage").src =
+                    data.lime_plot_url;
+
+                report.style.display = "block";
+
+                report.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            } catch (error) {
+
+                errorMessage.textContent =
+                    error.message || "Something went wrong. Please try again.";
+
+                errorMessage.style.display = "block";
+
+            } finally {
+
+                submitButton.disabled = false;
+                submitButton.textContent = "Generate Assessment Report";
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>

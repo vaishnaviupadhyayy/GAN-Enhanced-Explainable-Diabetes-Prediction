@@ -1,0 +1,111 @@
+
+=======================================================
+Experiment: Original Data
+Model: Logistic Regression
+=======================================================
+              precision    recall  f1-score   support
+
+ No Diabetes       0.75      0.82      0.78       100
+    Diabetes       0.60      0.50      0.55        54
+
+    accuracy                           0.71       154
+   macro avg       0.68      0.66      0.67       154
+weighted avg       0.70      0.71      0.70       154
+
+
+=======================================================
+Experiment: Original Data
+Model: SVM
+=======================================================
+              precision    recall  f1-score   support
+
+ No Diabetes       0.78      0.84      0.81       100
+    Diabetes       0.65      0.56      0.60        54
+
+    accuracy                           0.74       154
+   macro avg       0.71      0.70      0.70       154
+weighted avg       0.73      0.74      0.73       154
+
+
+=======================================================
+Experiment: Original Data
+Model: Random Forest
+=======================================================
+              precision    recall  f1-score   support
+
+ No Diabetes       0.80      0.88      0.84       100
+    Diabetes       0.73      0.59      0.65        54
+
+    accuracy                           0.78       154
+   macro avg       0.76      0.74      0.75       154
+weighted avg       0.77      0.78      0.77       154
+
+
+=======================================================
+Experiment: Original Data
+Model: XGBoost
+=======================================================
+              precision    recall  f1-score   support
+
+ No Diabetes       0.80      0.84      0.82       100
+    Diabetes       0.67      0.61      0.64        54
+
+    accuracy                           0.76       154
+   macro avg       0.74      0.73      0.73       154
+weighted avg       0.76      0.76      0.76       154
+
+
+=======================================================
+Experiment: GAN Augmented Data
+Model: Logistic Regression
+=======================================================
+              precision    recall  f1-score   support
+
+ No Diabetes       0.77      0.79      0.78       100
+    Diabetes       0.60      0.57      0.58        54
+
+    accuracy                           0.71       154
+   macro avg       0.69      0.68      0.68       154
+weighted avg       0.71      0.71      0.71       154
+
+
+=======================================================
+Experiment: GAN Augmented Data
+Model: SVM
+=======================================================
+              precision    recall  f1-score   support
+
+ No Diabetes       0.78      0.82      0.80       100
+    Diabetes       0.63      0.57      0.60        54
+
+    accuracy                           0.73       154
+   macro avg       0.71      0.70      0.70       154
+weighted avg       0.73      0.73      0.73       154
+
+
+=======================================================
+Experiment: GAN Augmented Data
+Model: Random Forest
+=======================================================
+              precision    recall  f1-score   support
+
+ No Diabetes       0.79      0.84      0.81       100
+    Diabetes       0.66      0.57      0.61        54
+
+    accuracy                           0.75       154
+   macro avg       0.72      0.71      0.71       154
+weighted avg       0.74      0.75      0.74       154
+
+
+=======================================================
+Experiment: GAN Augmented Data
+Model: XGBoost
+=======================================================
+              precision    recall  f1-score   support
+
+ No Diabetes       0.79      0.83      0.81       100
+    Diabetes       0.65      0.59      0.62        54
+
+    accuracy                           0.75       154
+   macro avg       0.72      0.71      0.72       154
+weighted avg       0.74      0.75      0.74       154

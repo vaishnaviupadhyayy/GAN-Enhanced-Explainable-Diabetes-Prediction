@@ -1,0 +1,9 @@
+Feature Condition,LIME Contribution,Direction,Absolute Contribution
+Glucose > 140.00,0.32861984938237027,Supports Diabetes prediction,0.32861984938237027
+BMI <= 27.62,-0.1613189873128707,Supports No Diabetes prediction,0.1613189873128707
+Pregnancies > 6.00,0.07072137050119624,Supports Diabetes prediction,0.07072137050119624
+29.00 < Age <= 41.00,0.049669096413956414,Supports Diabetes prediction,0.049669096413956414
+120.00 < Insulin <= 125.00,0.0435278701228239,Supports Diabetes prediction,0.0435278701228239
+0.24 < DiabetesPedigreeFunction <= 0.38,-0.03145810615698591,Supports No Diabetes prediction,0.03145810615698591
+BloodPressure <= 64.00,-0.026129960326636024,Supports No Diabetes prediction,0.026129960326636024
+25.00 < SkinThickness <= 29.00,-0.0187791685122479,Supports No Diabetes prediction,0.0187791685122479

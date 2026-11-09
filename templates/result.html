@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Prediction Result</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body><main class="container"><h1>Prediction Result</h1>
+<section class="result"><h2>{{ prediction }}</h2><p>Predicted probability for Diabetes: <strong>{{ probability }}%</strong></p></section>
+<h3>Submitted Values</h3><table>{% for key, value in values.items() %}<tr><th>{{ key }}</th><td>{{ value }}</td></tr>{% endfor %}</table>
+<h3>SHAP Explanation</h3><p class="subtitle">Signed contribution for the Diabetes (class 1) prediction. Positive values push toward class 1; negative values push away.</p>
+<table><tr><th>Feature</th><th>SHAP value</th></tr>{% for name, value in shap_rows %}<tr><td>{{ name }}</td><td>{{ value }}</td></tr>{% endfor %}</table>
+<h3>LIME Explanation</h3><p class="subtitle">Local feature contributions for this one input.</p>
+<table><tr><th>Feature condition</th><th>Contribution</th></tr>{% for name, value in lime_rows %}<tr><td>{{ name }}</td><td>{{ value }}</td></tr>{% endfor %}</table>
+<p class="note">Educational output only. SHAP and LIME describe model behavior, not medical causation or diagnosis.</p>
+<a class="back" href="/">Try another prediction</a></main></body></html>
